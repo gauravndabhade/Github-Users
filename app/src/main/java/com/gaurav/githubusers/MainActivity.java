@@ -10,20 +10,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+
+import com.gaurav.githubusers.BaseRepo.BaseRepository;
 import com.gaurav.githubusers.adapters.UserAdapter;
-import com.gaurav.githubusers.asynctasks.GetGithubUserData;
-import com.gaurav.githubusers.asynctasks.SearchGithubUser;
 import com.gaurav.githubusers.mvp.GitUserContract;
 import com.gaurav.githubusers.mvp.GitUserPresenter;
-import com.gaurav.githubusers.mvp.models.UserInteractor;
-import com.gaurav.githubusers.mvp.models.UserInteractorImpl;
-import com.gaurav.githubusers.mvp.presenters.UserPresenter;
-import com.gaurav.githubusers.mvp.views.UserView;
-import com.gaurav.githubusers.pagination.EndlessRecyclerViewScrollListener;
+import com.gaurav.githubusers.mvp.di.DaggerGitUserComponent;
+import com.gaurav.githubusers.mvp.di.GitUserComponent;
+import com.gaurav.githubusers.mvp.di.GitUserModule;
 import com.gaurav.githubusers.response.UserResponse;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,7 +39,8 @@ public class MainActivity extends AppCompatActivity implements
     UserAdapter userAdapter;
     LinearLayoutManager linearLayoutManager;
 
-    private GitUserPresenter userPresenter;
+    @Inject
+    GitUserPresenter userPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +50,17 @@ public class MainActivity extends AppCompatActivity implements
 
         getSupportActionBar().hide();
 
+        GitUserComponent gitUserComponent = DaggerGitUserComponent.builder()
+                .gitUserModule(new GitUserModule(this)).build();
+
+
+        gitUserComponent.injectGitHub(this);
+
+        userPresenter.attachView(this);
+
         linearLayoutManager = new LinearLayoutManager(MainActivity.this);
         reviewRecyclerView.setLayoutManager(linearLayoutManager);
         progressBar.setVisibility(View.VISIBLE);
-
-        userPresenter = new GitUserPresenter();
-        userPresenter.bind(this);
 
         userPresenter.setUserList();
     }
@@ -88,6 +93,5 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        userPresenter.unbind();
     }
 }

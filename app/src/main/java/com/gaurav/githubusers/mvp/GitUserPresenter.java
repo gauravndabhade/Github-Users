@@ -1,24 +1,28 @@
 package com.gaurav.githubusers.mvp;
 
+import android.app.Activity;
+import android.content.Context;
+
+import com.gaurav.githubusers.BaseRepo.BaseRepository;
+import com.gaurav.githubusers.MainActivity;
 import com.gaurav.githubusers.response.UserResponse;
 
 import java.util.List;
 
-public class GitUserPresenter implements GitUserContract.GitUserAction, GitUserRepositoryImpl.ResponseCallback {
+import javax.inject.Inject;
 
-    GitUserContract.GitUserRepository repo;
-    GitUserContract.GitUserView view;
+import dagger.Module;
+import dagger.Provides;
 
+public class GitUserPresenter extends BaseRepository<MainActivity> implements GitUserContract.GitUserAction {//, GitUserRepositoryImpl.ResponseCallback {
+
+    @Inject
+    GitUserRepositoryImpl repo;
+
+
+    @Inject
     public GitUserPresenter() {
-        this.repo = new GitUserRepositoryImpl(this);
-    }
 
-    public void bind(GitUserContract.GitUserView view) {
-        this.view = view;
-    }
-
-    public void unbind() {
-        this.view = null;
     }
 
     public void setUserList() {
@@ -33,8 +37,7 @@ public class GitUserPresenter implements GitUserContract.GitUserAction, GitUserR
             repo.getAllUsersInteractor();
     }
 
-    @Override
-    public void processFinish(List<UserResponse> output) {
-        view.updateList(output);
-    }
+//    @Override
+//    public void updateUI(List<UserResponse> output) {
+//    }
 }

@@ -3,6 +3,8 @@ package com.gaurav.githubusers.mvp;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.gaurav.githubusers.BaseRepo.BaseRepository;
+import com.gaurav.githubusers.MainActivity;
 import com.gaurav.githubusers.api.Api;
 import com.gaurav.githubusers.api.ApiClient;
 import com.gaurav.githubusers.response.SearchResponse;
@@ -10,6 +12,8 @@ import com.gaurav.githubusers.response.UserResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,13 +23,15 @@ public class GitUserRepositoryImpl implements GitUserContract.GitUserRepository 
 
     Api api = ApiClient.getClient().create(Api.class);
     static List<UserResponse> result = null;
-    static SearchResponse result2 = null;
-    ResponseCallback responseCallback;
+//    static SearchResponse result2 = null;
 
-    GitUserRepositoryImpl(ResponseCallback callbackResponse) {
-        this.responseCallback = callbackResponse;
+//    @Inject
+//    GitUserPresenter presenter;
+
+    @Inject
+    GitUserRepositoryImpl() {
+
     }
-
 
     @Override
     public void getAllUsersInteractor() {
@@ -34,7 +40,7 @@ public class GitUserRepositoryImpl implements GitUserContract.GitUserRepository 
             @Override
             public void onResponse(Call<List<UserResponse>> call, Response<List<UserResponse>> response) {
                 result = response.body();
-                responseCallback.processFinish(result);
+//                view.updateList(result);
             }
 
             @Override
@@ -53,7 +59,7 @@ public class GitUserRepositoryImpl implements GitUserContract.GitUserRepository 
         call.enqueue(new Callback<SearchResponse>() {
             @Override
             public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
-                responseCallback.processFinish(response.body().getItems());
+//                view.updateList(response.body().getItems());
             }
 
             @Override
@@ -64,8 +70,8 @@ public class GitUserRepositoryImpl implements GitUserContract.GitUserRepository 
         });
     }
 
-    public interface ResponseCallback {
-        void processFinish(List<UserResponse> output);
-    }
+//    public interface ResponseCallback {
+//        void updateUI(List<UserResponse> output);
+//    }
 
 }
