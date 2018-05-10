@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.gaurav.githubusers.BaseRepo.BaseRepository;
 import com.gaurav.githubusers.adapters.UserAdapter;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ButterKnife.bind(this);
 
         getSupportActionBar().hide();
@@ -53,15 +55,11 @@ public class MainActivity extends AppCompatActivity implements
         GitUserComponent gitUserComponent = DaggerGitUserComponent.builder()
                 .gitUserModule(new GitUserModule(this)).build();
 
-
         gitUserComponent.injectGitHub(this);
-
-        userPresenter.attachView(this);
 
         linearLayoutManager = new LinearLayoutManager(MainActivity.this);
         reviewRecyclerView.setLayoutManager(linearLayoutManager);
         progressBar.setVisibility(View.VISIBLE);
-
         userPresenter.setUserList();
     }
 
@@ -69,8 +67,13 @@ public class MainActivity extends AppCompatActivity implements
     void searchUser() {
 
         String query = searchText.getText().toString();
-        userPresenter.onClickSearch(query);
-
+        if(!query.equals("")) {
+            userPresenter.onClickSearch(query);
+        }
+        else {
+            userPresenter.setUserList();
+            Toast.makeText(this, "Please search something!!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     void setEndlessAdapter(final List<UserResponse> dataForPagination) {
@@ -84,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void updateList(List<UserResponse> data) {
-        if(null != data)
+        if(null != data || data.size() > 0)
             setEndlessAdapter(data);
         else
             Log.d("MainActivity","No data");

@@ -10,7 +10,6 @@ import com.gaurav.githubusers.api.ApiClient;
 import com.gaurav.githubusers.response.SearchResponse;
 import com.gaurav.githubusers.response.UserResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,15 +21,12 @@ import retrofit2.Response;
 public class GitUserRepositoryImpl implements GitUserContract.GitUserRepository {
 
     Api api = ApiClient.getClient().create(Api.class);
-    static List<UserResponse> result = null;
-//    static SearchResponse result2 = null;
 
-//    @Inject
-//    GitUserPresenter presenter;
+    @Inject
+    MainActivity view;
 
     @Inject
     GitUserRepositoryImpl() {
-
     }
 
     @Override
@@ -39,13 +35,17 @@ public class GitUserRepositoryImpl implements GitUserContract.GitUserRepository 
         call.enqueue(new Callback<List<UserResponse>>() {
             @Override
             public void onResponse(Call<List<UserResponse>> call, Response<List<UserResponse>> response) {
-                result = response.body();
-//                view.updateList(result);
+                try {
+                    List<UserResponse> result = response.body();
+                    if (result.size() > 0)
+                        view.updateList(result);
+                } catch (NullPointerException e) {
+                    Toast.makeText(view, "Data not available", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(Call<List<UserResponse>> call, Throwable t) {
-
                 Log.d("Error",t.getMessage());
             }
         });
@@ -59,19 +59,23 @@ public class GitUserRepositoryImpl implements GitUserContract.GitUserRepository 
         call.enqueue(new Callback<SearchResponse>() {
             @Override
             public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
-//                view.updateList(response.body().getItems());
+                try {
+                    List<UserResponse> result = response.body().getItems();
+                    if (result.size() > 0)
+                        view.updateList(response.body().getItems());
+                } catch (NullPointerException e) {
+                    Toast.makeText(view, "Data not available", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(Call<SearchResponse> call, Throwable t) {
                 Log.d("Error",t.getMessage());
-
             }
         });
     }
 
-//    public interface ResponseCallback {
-//        void updateUI(List<UserResponse> output);
-//    }
-
+    public interface ResponseCallback {
+        void updateUI(List<UserResponse> output);
+    }
 }

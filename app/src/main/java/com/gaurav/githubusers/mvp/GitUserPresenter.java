@@ -14,15 +14,13 @@ import javax.inject.Inject;
 import dagger.Module;
 import dagger.Provides;
 
-public class GitUserPresenter extends BaseRepository<MainActivity> implements GitUserContract.GitUserAction {//, GitUserRepositoryImpl.ResponseCallback {
+public class GitUserPresenter implements GitUserContract.GitUserAction{
 
     @Inject
     GitUserRepositoryImpl repo;
 
-
     @Inject
     public GitUserPresenter() {
-
     }
 
     public void setUserList() {
@@ -31,13 +29,9 @@ public class GitUserPresenter extends BaseRepository<MainActivity> implements Gi
 
     @Override
     public void onClickSearch(String input) {
-        if(null != input)
+        if(null != input || "".equals(input) )
             repo.searchUser(input);
         else
             repo.getAllUsersInteractor();
     }
-
-//    @Override
-//    public void updateUI(List<UserResponse> output) {
-//    }
 }
