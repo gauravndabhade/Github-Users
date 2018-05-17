@@ -2,8 +2,6 @@ package com.gaurav.githubusers.mvp;
 
 import android.util.Log;
 import android.widget.Toast;
-
-import com.gaurav.githubusers.BaseRepo.BaseRepository;
 import com.gaurav.githubusers.MainActivity;
 import com.gaurav.githubusers.api.Api;
 import com.gaurav.githubusers.api.ApiClient;
@@ -20,62 +18,63 @@ import retrofit2.Response;
 
 public class GitUserRepositoryImpl implements GitUserContract.GitUserRepository {
 
-    Api api = ApiClient.getClient().create(Api.class);
+    private Api api ;
+//            = ApiClient.getClient().create(Api.class);
 
     @Inject
     MainActivity view;
 
     @Inject
-    GitUserRepositoryImpl() {
+    GitUserRepositoryImpl(Api api) {
+        this.api = api;
     }
 
     @Override
     public void getAllUsersInteractor() {
         Call<List<UserResponse>> call = api.getUserData();
-        call.enqueue(new Callback<List<UserResponse>>() {
-            @Override
-            public void onResponse(Call<List<UserResponse>> call, Response<List<UserResponse>> response) {
-                try {
-                    List<UserResponse> result = response.body();
-                    if (result.size() > 0)
-                        view.updateList(result);
-                } catch (NullPointerException e) {
-                    Toast.makeText(view, "Data not available", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<UserResponse>> call, Throwable t) {
-                Log.d("Error",t.getMessage());
-            }
-        });
+        call.enqueue( userResponseCallback );
     }
+
+    private Callback<List<UserResponse>>  userResponseCallback = new Callback<List<UserResponse>>() {
+        @Override
+        public void onResponse(Call<List<UserResponse>> call, Response<List<UserResponse>> response) {
+            try {
+                List<UserResponse> result = response.body();
+                if (result.size() > 0)
+                    view.updateList(result);
+            } catch (NullPointerException e) {
+                Toast.makeText(view, "Data not available", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<List<UserResponse>> call, Throwable t) {
+            Log.d("Error", t.getMessage());
+        }
+    };
 
     @Override
     public void searchUser(String userInput) {
         String type = "application/vnd.github.mercy-preview+json";
-
         Call<SearchResponse> call = api.searchUser(type, userInput);
-        call.enqueue(new Callback<SearchResponse>() {
-            @Override
-            public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
-                try {
-                    List<UserResponse> result = response.body().getItems();
-                    if (result.size() > 0)
-                        view.updateList(response.body().getItems());
-                } catch (NullPointerException e) {
-                    Toast.makeText(view, "Data not available", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<SearchResponse> call, Throwable t) {
-                Log.d("Error",t.getMessage());
-            }
-        });
+        call.enqueue( searchResponseCallback );
     }
 
-    public interface ResponseCallback {
-        void updateUI(List<UserResponse> output);
-    }
+    Callback<SearchResponse> searchResponseCallback = new Callback<SearchResponse>() {
+        @Override
+        public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
+            try {
+                List<UserResponse> result = response.body().getItems();
+                if (result.size() > 0)
+                    view.updateList(response.body().getItems());
+            } catch (NullPointerException e) {
+                Toast.makeText(view, "Data not available", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<SearchResponse> call, Throwable t) {
+            Log.d("Error", t.getMessage());
+        }
+    };
 }

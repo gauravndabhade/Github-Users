@@ -6,7 +6,7 @@ import java.util.List;
 public interface GitUserContract {
 
     interface GitUserAction {
-        void onClickSearch(String inpute);
+        void onClickSearch(String input);
     }
 
     interface GitUserView {

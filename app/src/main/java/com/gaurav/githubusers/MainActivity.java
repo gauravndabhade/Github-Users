@@ -1,6 +1,5 @@
 package com.gaurav.githubusers;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,9 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.gaurav.githubusers.BaseRepo.BaseRepository;
 import com.gaurav.githubusers.adapters.UserAdapter;
 import com.gaurav.githubusers.mvp.GitUserContract;
 import com.gaurav.githubusers.mvp.GitUserPresenter;
@@ -29,8 +26,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements
-        GitUserContract.GitUserView{
+public class MainActivity
+        extends AppCompatActivity
+        implements GitUserContract.GitUserView{
 
     @BindView(R.id.progress_bar) ProgressBar progressBar;
     @BindView(R.id.users_list) RecyclerView reviewRecyclerView;
@@ -72,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         else {
             userPresenter.setUserList();
-            Toast.makeText(this, "Please search something!!", Toast.LENGTH_SHORT).show();
         }
     }
 

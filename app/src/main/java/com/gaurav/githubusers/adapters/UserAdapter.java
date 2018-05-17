@@ -1,5 +1,6 @@
 package com.gaurav.githubusers.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -18,6 +19,8 @@ import com.gaurav.githubusers.R;
 import com.gaurav.githubusers.response.UserResponse;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,7 +45,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserAdapter.UserHolder holder,final int position) {
+    public void onBindViewHolder(@NonNull UserAdapter.UserHolder holder, @SuppressLint("RecyclerView") final int position) {
 
         holder.title.setText(data.get(position).getLogin());
         holder.comment.setText(data.get(position).getUrl());
@@ -69,10 +72,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        boolean isLoadingAdded = false;
         int LOADING = 0;
         int ITEM = 1;
-        return (position == data.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
+        return (position == data.size() - 1 ) ? LOADING : ITEM;
     }
 
     class UserHolder extends RecyclerView.ViewHolder {
@@ -80,8 +82,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
         @BindView(R.id.title) TextView title;
         @BindView(R.id.comment)TextView comment;
         @BindView(R.id.iv)ImageView iv;
-        @BindView(R.id.card_layout)
-        CardView cardView;
+        @BindView(R.id.card_layout) CardView cardView;
 
         private UserHolder(View itemView) {
             super(itemView);
